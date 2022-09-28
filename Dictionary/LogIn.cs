@@ -42,5 +42,28 @@ namespace Dictionary
         {
             Application.Exit();
         }
+
+        public bool MouseDown;
+        public Point LastLocation;
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseDown = true;
+            LastLocation = e.Location;
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseDown = false;
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (MouseDown)
+            {
+                this.Location = new Point((this.Location.X - LastLocation.X) + e.X, (this.Location.Y - LastLocation.Y) + e.Y);
+                this.Update();
+            }
+        }
     }
 }

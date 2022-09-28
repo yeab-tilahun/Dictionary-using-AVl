@@ -215,8 +215,8 @@ namespace Dictionary
 
             // 
             // textBox1
-            // 
-           textBox1.Location = new System.Drawing.Point(110, 26);
+            //
+           textBox1.Location = new System.Drawing.Point(110, 50);
            textBox1.Name = "textBox1";
            textBox1.Size = new System.Drawing.Size(193, 20);
            textBox1.TabIndex = 4;
@@ -224,21 +224,21 @@ namespace Dictionary
             // 
             // textBox2
             // 
-           textBox2.Location = new System.Drawing.Point(110, 84);
+           textBox2.Location = new System.Drawing.Point(110, 106);
            textBox2.Name = "textBox2";
            textBox2.Size = new System.Drawing.Size(193, 20);
            textBox2.TabIndex = 5;
             // 
             // textBox3
             // 
-            textBox3.Location = new System.Drawing.Point(110, 143);
+            textBox3.Location = new System.Drawing.Point(110, 165);
             textBox3.Name = "textBox3";
             textBox3.Size = new System.Drawing.Size(193, 20);
             textBox3.TabIndex = 6;
             // 
             // textBox4
             // 
-            textBox4.Location = new System.Drawing.Point(110, 204);
+            textBox4.Location = new System.Drawing.Point(110, 226);
             textBox4.Multiline = true;
             textBox4.Name = "textBox4";
             textBox4.Size = new System.Drawing.Size(193, 110);
