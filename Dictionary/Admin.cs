@@ -57,31 +57,34 @@ namespace Dictionary
         private void Admin_Load(object sender, EventArgs e)
         {
           SetupTextBox();
-          view_all();
+            //view_all();
+            getIndex();
         }
 
-        public void view_all()
+        public void getIndex()
         {
-            if (File.Exists(fileName))
+            Stack<Node> s = new Stack<Node>();
+            Queue<long> q = new Queue<long>();
+            Node curr = tree.root;
+
+            while (curr != null || s.Count != 0)
             {
-                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                while (curr != null)
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    string w, t, p, m;
-                    while (stream.Position < stream.Length)
-                    {
-                        Dictionary read = (Dictionary)formatter.Deserialize(stream);
-
-                        // Console.WriteLine("start =" + stream.Position);
-                        w = new string(read.word);
-                        t = new string(read.pron);
-                        p = new string(read.type);
-                        m = new string(read.meaning);
-                        populateItems(w, t, p, m);
-                    }
-
-                    stream.Close();
+                    s.Push(curr);
+                    curr = curr.left;
                 }
+                curr = s.Pop();
+
+                foreach (long n in curr.data.index.ToDataArray())
+                {
+                    q.Enqueue(n);
+                }
+                curr = curr.right;
+            }
+            while (q.Count != 0)
+            {
+                view_one(q.Dequeue());
             }
         }
         private void populateItems(string w, string t, string p, string m)
@@ -91,8 +94,8 @@ namespace Dictionary
             {
                 listword[i] = new LoadWord(1);
                 listword[i].word = w;
-                listword[i].type = t;
-                listword[i].pron = p;
+                listword[i].type = p;
+                listword[i].pron = t;
                 listword[i].meaning = m;
                 if (flowLayoutPanel1.Controls.Count < 0)
                 {
@@ -119,9 +122,9 @@ namespace Dictionary
                 Node result = tree.Find(search);
                 if (result.data.word != null)
                 {
+                    flowLayoutPanel1.Controls.Clear();
                     foreach (long n in result.data.index.ToDataArray())
                     {
-                        flowLayoutPanel1.Controls.Clear();
                         view_one(n);
                     }
                 }
@@ -198,5 +201,94 @@ namespace Dictionary
             textBox3.Text = "";
             textBox4.Text = "";
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string temp;
+            // Create A dictionary object and recive input from user
+            Dictionary input = new Dictionary();
+            temp = textBox1.Text;
+            input.word = temp.ToCharArray();
+            temp = textBox2.Text;
+            input.type = temp.ToCharArray();
+            temp = textBox3.Text;
+            input.pron = temp.ToCharArray();
+            temp = textBox4.Text;
+            input.meaning = temp.ToCharArray();
+
+            DicIndex Dindex = new DicIndex();
+            Dindex.word = input.word;
+
+            //find the position from the file and assign it to index
+            Dindex.index.Insert(word_add(input));
+            tree.Add(Dindex);
+            flowLayoutPanel1.Controls.Clear();
+            getIndex();
+        }
+
+        long word_add(Dictionary input)
+        {
+            long index;
+
+            if (!File.Exists(fileName))
+            {
+                FileStream fileStream = new FileStream(fileName, FileMode.Create);
+                fileStream.Close();
+            }
+            using (FileStream stream = new FileStream(fileName, FileMode.Append, FileAccess.Write))
+            {
+
+                BinaryFormatter formatter = new BinaryFormatter();
+                index = stream.Position;
+                formatter.Serialize(stream, input);
+                stream.Close();
+            }
+
+            return index;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DicIndex s = new DicIndex();
+            s.word = textBox1.Text.ToCharArray();
+            Node search = new Node(s);
+            Node result = tree.Find(search);
+            if (result.data.word == null)
+                MessageBox.Show("Nothing Found", "Dictionary", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+            else
+            {
+                long edit = result.data.index.ToDataArray()[0];
+                Dictionary input = new Dictionary();
+                input.word = result.data.word;
+                input.type = textBox2.Text.ToCharArray();
+                input.pron = textBox3.Text.ToCharArray();
+                input.meaning = textBox4.Text.ToCharArray();
+                word_edit_file(input, edit);
+                flowLayoutPanel1.Controls.Clear();
+                getIndex();
+            }
+        }
+        long word_edit_file(Dictionary input, long pos)
+        {
+            long index;
+
+            if (!File.Exists(fileName))
+            {
+                FileStream fileStream = new FileStream(fileName, FileMode.Create);
+                fileStream.Close();
+            }
+            using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Write))
+            {
+
+                BinaryFormatter formatter = new BinaryFormatter();
+                stream.Position = pos;
+                index = stream.Position;
+                formatter.Serialize(stream, input);
+                stream.Close();
+            }
+
+            return index;
+        }
     }
+
 }

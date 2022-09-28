@@ -55,32 +55,32 @@ namespace Dictionary
         private void Form1_Load(object sender, EventArgs e)
         {
             //populateItems();
-            view_all();
+            getIndex();
         }
-       public void view_all()
+        public void getIndex()
         {
+            Stack<Node> s = new Stack<Node>();
+            Queue<long> q = new Queue<long>();
+            Node curr = tree.root;
 
-
-            if (File.Exists(fileName))
+            while (curr != null || s.Count != 0)
             {
-                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                while (curr != null)
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    string w, t, p, m;
-                    while (stream.Position < stream.Length)
-                    {
-                        Dictionary read = (Dictionary)formatter.Deserialize(stream);
-
-                        // Console.WriteLine("start =" + stream.Position);
-                        w = new string(read.word);
-                        t = new string(read.pron);
-                        p = new string(read.type);
-                        m = new string(read.meaning);
-                        populateItems(w, t, p, m);
-                    }
-
-                    stream.Close();
+                    s.Push(curr);
+                    curr = curr.left;
                 }
+                curr = s.Pop();
+
+                foreach (long n in curr.data.index.ToDataArray())
+                {
+                    q.Enqueue(n);
+                }
+                curr = curr.right;
+            }
+            while (q.Count != 0)
+            {
+                view_one(q.Dequeue());
             }
         }
         private void populateItems(string w, string t, string p, string m)

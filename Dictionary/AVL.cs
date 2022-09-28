@@ -9,7 +9,7 @@ namespace Dictionary
     public class AVL
     {
 
-        Node root;
+       public Node root;
         public AVL()
         {
 
