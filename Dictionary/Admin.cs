@@ -21,7 +21,7 @@ namespace Dictionary
 
         Form1 f1 = new Form1(1);
         AVL tree = new AVL();
-        const string fileName = "Dictiona1.dat";
+        const string fileName = "Dictionary1.dat";
         const string tempfileName = "temp.dat";
         public void init_avl()
         {
@@ -108,6 +108,7 @@ namespace Dictionary
 
         private void button4_Click(object sender, EventArgs e)
         {
+            flowLayoutPanel1.Controls.Clear();
             DicIndex s = new DicIndex();
             string str = textBox5.Text;
             s.word = str.ToCharArray();
@@ -116,18 +117,23 @@ namespace Dictionary
             {
                 if (str.Contains("*"))
                 {
-                    f1.find_similar(str);
+                    find_similar(str);
                     return;
                 }
                 Node result = tree.Find(search);
                 if (result.data.word != null)
                 {
-                    flowLayoutPanel1.Controls.Clear();
+                   
                     foreach (long n in result.data.index.ToDataArray())
                     {
                         view_one(n);
                     }
                 }
+            }
+            if (str.Contains(" "))
+            {
+                getIndex();
+                return;
             }
         }
         void view_one(long Pos)
@@ -146,6 +152,51 @@ namespace Dictionary
                     m = new string(read.meaning);
                     populateItems(w, t, p, m);
                     stream.Close();
+                }
+            }
+        }
+        public void find_similar(string str)
+        {
+            int lastCharIndex = str.Length - 1;
+            string regex;
+            List<Node> matches = new List<Node>();
+
+            // Case: *abc*
+            if (str[0] == '*' && str[lastCharIndex] == '*')
+            {
+                regex = ".*" + str.Substring(1, lastCharIndex - 1) + ".*";
+            }
+            // Case *abc
+            else if (str[0] == '*')
+            {
+                regex = ".*" + str.Substring(1);
+            }
+            // Case abc*
+            else if (str[lastCharIndex] == '*')
+            {
+                regex = str.Substring(0, str.Length - 1);
+            }
+            // Case a*bC
+            else
+            {
+                Console.WriteLine("Invalid wildcard placement");
+                regex = null;
+            }
+
+            if (!string.IsNullOrEmpty(regex))
+            {
+                tree.find_matches(regex, matches);
+                if (matches.Count > 0)
+                {
+                    foreach (Node n in matches)
+                    {
+
+                        foreach (long p in n.data.index.ToDataArray())
+                        {
+                            view_one(p);
+                        }
+
+                    }
                 }
             }
         }
@@ -254,7 +305,7 @@ namespace Dictionary
             Node search = new Node(s);
             Node result = tree.Find(search);
             if (result.data.word == null)
-                MessageBox.Show("Nothing Found", "Dictionary", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+                MessageBox.Show("Nothing Found", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else
             {
                 long edit = result.data.index.ToDataArray()[0];
@@ -264,6 +315,7 @@ namespace Dictionary
                 input.pron = textBox3.Text.ToCharArray();
                 input.meaning = textBox4.Text.ToCharArray();
                 word_edit_file(input, edit);
+                MessageBox.Show("Inserted", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 flowLayoutPanel1.Controls.Clear();
                 getIndex();
             }
@@ -288,6 +340,98 @@ namespace Dictionary
             }
 
             return index;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DicIndex s = new DicIndex();
+            s.word = textBox1.Text.ToCharArray();
+            Node search = new Node(s);
+            Node result = tree.Find(search);
+            if (result.data.word == null)
+                MessageBox.Show("Nothing Found", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+            {
+                long delete = result.data.index.ToDataArray()[0];
+                if (result.data.index.Remove(delete))
+                 
+                if (result.data.index.IsEmpty())
+                        tree.Delete(result);
+                Dictionary input = new Dictionary();
+                input.word = "null".ToCharArray();
+                word_edit_file(input, delete);
+                MessageBox.Show("Deleted", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                flowLayoutPanel1.Controls.Clear();
+                getIndex();
+            }
+        }
+
+        public void init_clean()
+        {      // ReCreate Temporary File
+            FileStream fileStream1 = new FileStream(tempfileName, FileMode.Create);
+            fileStream1.Close();
+            if (File.Exists(fileName))
+            {
+                Dictionary ck = new Dictionary();
+                ck.word = "null".ToCharArray();
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+
+                    FileStream stream2 = new FileStream(tempfileName, FileMode.Append, FileAccess.Write);
+
+
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    BinaryFormatter formatter2 = new BinaryFormatter();
+                    while (stream.Position < stream.Length)
+                    {
+                        Dictionary read = (Dictionary)formatter.Deserialize(stream);
+
+                        if (new string(read.word) == new string(ck.word))
+                            Console.WriteLine("Cleaning  ---> ");
+                        else
+                            formatter2.Serialize(stream2, read);
+                    }
+
+                    stream2.Close();
+                }
+                File.Delete(fileName);
+                File.Move(tempfileName, fileName);
+            }
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            init_clean();
+            this.Hide();
+            LogIn l1 = new LogIn();
+            l1.Show();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        public bool MouseDown;
+        public Point LastLocation;
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseDown = true;
+            LastLocation = e.Location;
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseDown = false;
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (MouseDown)
+            {
+                this.Location = new Point((this.Location.X - LastLocation.X) + e.X, (this.Location.Y - LastLocation.Y) + e.Y);
+                this.Update();
+            }
         }
     }
 

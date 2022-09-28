@@ -48,14 +48,14 @@ namespace Dictionary
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(3, 29);
+            this.textBox1.Location = new System.Drawing.Point(1, 29);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(202, 20);
             this.textBox1.TabIndex = 1;
             // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.MediumAquamarine;
+            this.button1.BackColor = System.Drawing.SystemColors.Control;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.Location = new System.Drawing.Point(207, 29);
             this.button1.Name = "button1";
@@ -108,15 +108,16 @@ namespace Dictionary
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(268, 506);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dictionary";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);

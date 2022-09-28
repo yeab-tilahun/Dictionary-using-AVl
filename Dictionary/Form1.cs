@@ -49,7 +49,7 @@ namespace Dictionary
 
         }
 
-        const string fileName = "Dictiona1.dat";
+        const string fileName = "Dictionary1.dat";
         const string tempfileName = "temp.dat";
 
         private void Form1_Load(object sender, EventArgs e)
@@ -104,7 +104,7 @@ namespace Dictionary
 
         private void button1_Click(object sender, EventArgs e)
         {
-          
+            flowLayoutPanel1.Controls.Clear();
             DicIndex s = new DicIndex();
             string str = textBox1.Text;
             s.word = str.ToCharArray();
@@ -116,7 +116,12 @@ namespace Dictionary
                     find_similar(str);
                     return;
                 }
-                Node result = tree.Find(search);
+                if (str.Contains(" "))
+                {
+                    getIndex();
+                    return;
+                }
+                 Node result = tree.Find(search);
                 if (result.data.word != null)
                 {
                     foreach (long n in result.data.index.ToDataArray())
@@ -202,7 +207,10 @@ namespace Dictionary
         private void button2_Click(object sender, EventArgs e)
         {
             init_clean();
-            Application.Exit();
+            this.Hide();
+            LogIn l1 = new LogIn();
+                l1.Show();
+
         }
         public void init_clean()
         {      // ReCreate Temporary File
