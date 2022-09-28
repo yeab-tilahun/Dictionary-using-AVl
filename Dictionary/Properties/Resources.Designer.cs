@@ -63,6 +63,26 @@ namespace Dictionary.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Adobe_Post_20211212_1430010_8650035357449766 {
+            get {
+                object obj = ResourceManager.GetObject("Adobe_Post_20211212_1430010.8650035357449766", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Asset_135 {
+            get {
+                object obj = ResourceManager.GetObject("Asset 135", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Asset_225 {
             get {
                 object obj = ResourceManager.GetObject("Asset 225", resourceCulture);

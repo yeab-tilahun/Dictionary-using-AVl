@@ -12,9 +12,11 @@ namespace Dictionary
 {
     public partial class LoadWord : UserControl
     {
-        public LoadWord()
+        public LoadWord(int a)
         {
             InitializeComponent();
+            if (a == 0)
+                pictureBox2.Visible = false;
         }
 
         private string _word;
@@ -48,6 +50,15 @@ namespace Dictionary
         {
             get { return _meaning; }
             set { _meaning = value; label4.Text = value; }
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+           // Admin a1 = new Admin(1);
+            Admin.textBox1.Text = word;
+            Admin.textBox2.Text = type;
+            Admin.textBox3.Text = pron;
+            Admin.textBox4.Text = meaning;
         }
     }
 }

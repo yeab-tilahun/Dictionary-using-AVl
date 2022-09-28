@@ -12,15 +12,21 @@ using System.Windows.Forms;
 
 namespace Dictionary
 {
-    public partial class Form1 : Form
+    public partial class Admin : Form
     {
-        AVL tree = new AVL();
+        public static TextBox textBox1 = new TextBox();
+        public static TextBox textBox2 = new TextBox();
+        public static TextBox textBox3 = new TextBox();
+        public static TextBox textBox4 = new TextBox();
 
+        Form1 f1 = new Form1(1);
+        AVL tree = new AVL();
+        const string fileName = "Dictiona1.dat";
+        const string tempfileName = "temp.dat";
         public void init_avl()
         {
             if (File.Exists(fileName))
             {
-
                 using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
@@ -39,28 +45,23 @@ namespace Dictionary
                 }
             }
         }
-        public Form1()
-        {  
+        public Admin()
+        {
             init_avl();
             InitializeComponent();
         }
-        public Form1(int a)
+        public Admin(int a)
         {
 
         }
-
-        const string fileName = "Dictiona1.dat";
-        const string tempfileName = "temp.dat";
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void Admin_Load(object sender, EventArgs e)
         {
-            //populateItems();
-            view_all();
+          SetupTextBox();
+          view_all();
         }
-       public void view_all()
+
+        public void view_all()
         {
-
-
             if (File.Exists(fileName))
             {
                 using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
@@ -88,7 +89,7 @@ namespace Dictionary
             LoadWord[] listword = new LoadWord[1];
             for (int i = 0; i < 1; i++)
             {
-                listword[i] = new LoadWord(0);
+                listword[i] = new LoadWord(1);
                 listword[i].word = w;
                 listword[i].type = t;
                 listword[i].pron = p;
@@ -102,18 +103,17 @@ namespace Dictionary
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
-          
             DicIndex s = new DicIndex();
-            string str = textBox1.Text;
+            string str = textBox5.Text;
             s.word = str.ToCharArray();
             Node search = new Node(s);
             if (str != null)
             {
                 if (str.Contains("*"))
                 {
-                    find_similar(str);
+                    f1.find_similar(str);
                     return;
                 }
                 Node result = tree.Find(search);
@@ -127,54 +127,7 @@ namespace Dictionary
                 }
             }
         }
-
-     public  void find_similar(string str)
-        {
-            int lastCharIndex = str.Length - 1;
-            string regex;
-            List<Node> matches = new List<Node>();
-
-            // Case: *abc*
-            if (str[0] == '*' && str[lastCharIndex] == '*')
-            {
-                regex = ".*" + str.Substring(1, lastCharIndex - 1) + ".*";
-            }
-            // Case *abc
-            else if (str[0] == '*')
-            {
-                regex = ".*" + str.Substring(1);
-            }
-            // Case abc*
-            else if (str[lastCharIndex] == '*')
-            {
-                regex = str.Substring(0, str.Length - 1);
-            }
-            // Case a*bC
-            else
-            {
-                Console.WriteLine("Invalid wildcard placement");
-                regex = null;
-            }
-
-            if (!string.IsNullOrEmpty(regex))
-            {
-                tree.find_matches(regex, matches);
-                if (matches.Count > 0)
-                {
-                    foreach (Node n in matches)
-                    {
-
-                        foreach (long p in n.data.index.ToDataArray())
-                        {
-                            view_one(p);
-                        }
-
-                    }
-                }
-            }
-        }
-
-     public   void view_one(long Pos)
+        void view_one(long Pos)
         {
             if (File.Exists(fileName))
             {
@@ -194,72 +147,56 @@ namespace Dictionary
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void SetupTextBox()
         {
-            init_clean();
-            Application.Exit();
-        }
-        public void init_clean()
-        {      // ReCreate Temporary File
-            FileStream fileStream1 = new FileStream(tempfileName, FileMode.Create);
-            fileStream1.Close();
-            if (File.Exists(fileName))
-            {
-                Dictionary ck = new Dictionary();
-                ck.word = "null".ToCharArray();
-                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-                {
+            this.Controls.Add(textBox4);
+            this.Controls.Add(textBox3);
+            this.Controls.Add(textBox2);
+            this.Controls.Add(textBox1);
 
-                    FileStream stream2 = new FileStream(tempfileName, FileMode.Append, FileAccess.Write);
-
-
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    BinaryFormatter formatter2 = new BinaryFormatter();
-                    while (stream.Position < stream.Length)
-                    {
-                        Dictionary read = (Dictionary)formatter.Deserialize(stream);
-
-                        if (new string(read.word) == new string(ck.word))
-                            Console.WriteLine("Cleaning  ---> ");
-                        else
-                            formatter2.Serialize(stream2, read);
-                    }
-
-                    stream2.Close();
-                }
-                System.IO.File.Delete(fileName);
-                System.IO.File.Move(tempfileName, fileName);
-            }
-        }
-
-
-        public bool MouseDown;
-        public Point LastLocation;
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            MouseDown = true;
-            LastLocation = e.Location;
+            // 
+            // textBox1
+            // 
+           textBox1.Location = new System.Drawing.Point(110, 26);
+           textBox1.Name = "textBox1";
+           textBox1.Size = new System.Drawing.Size(193, 20);
+           textBox1.TabIndex = 4;
+           textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // textBox2
+            // 
+           textBox2.Location = new System.Drawing.Point(110, 84);
+           textBox2.Name = "textBox2";
+           textBox2.Size = new System.Drawing.Size(193, 20);
+           textBox2.TabIndex = 5;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new System.Drawing.Point(110, 143);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new System.Drawing.Size(193, 20);
+            textBox3.TabIndex = 6;
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new System.Drawing.Point(110, 204);
+            textBox4.Multiline = true;
+            textBox4.Name = "textBox4";
+            textBox4.Size = new System.Drawing.Size(193, 110);
+            textBox4.TabIndex = 7;
         }
 
-        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
-            MouseDown = false;
-        }
-
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (MouseDown)
-            {
-                this.Location = new Point((this.Location.X - LastLocation.X) + e.X, (this.Location.Y - LastLocation.Y) + e.Y);
-                this.Update();
-            }
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
         }
     }
 }
-
