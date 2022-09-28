@@ -90,8 +90,8 @@ namespace Dictionary
             {
                 listword[i] = new LoadWord(0);
                 listword[i].word = w;
-                listword[i].type = t;
-                listword[i].pron = p;
+                listword[i].type = p;
+                listword[i].pron = t;
                 listword[i].meaning = m;
                 if (flowLayoutPanel1.Controls.Count < 0)
                 {
