@@ -116,6 +116,7 @@ namespace Dictionary
                     find_similar(str);
                     return;
                 }
+                //To display all words
                 if (str.Contains(" "))
                 {
                     getIndex();
@@ -157,7 +158,7 @@ namespace Dictionary
             // Case a*bC
             else
             {
-                Console.WriteLine("Invalid wildcard placement");
+                //Console.WriteLine("Invalid wildcard placement");
                 regex = null;
             }
 

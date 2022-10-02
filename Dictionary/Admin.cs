@@ -315,7 +315,7 @@ namespace Dictionary
                 input.pron = textBox3.Text.ToCharArray();
                 input.meaning = textBox4.Text.ToCharArray();
                 word_edit_file(input, edit);
-                MessageBox.Show("Inserted", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Edited", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 flowLayoutPanel1.Controls.Clear();
                 getIndex();
             }
@@ -387,7 +387,7 @@ namespace Dictionary
                         Dictionary read = (Dictionary)formatter.Deserialize(stream);
 
                         if (new string(read.word) == new string(ck.word))
-                            Console.WriteLine("Cleaning  ---> ");
+                            MessageBox.Show("Cleaning", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         else
                             formatter2.Serialize(stream2, read);
                     }
