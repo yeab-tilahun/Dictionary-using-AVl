@@ -47,7 +47,12 @@
             }
             set
             {
-                for (int i = 0; i < value.Length; i++)
+                int len = 0;
+                if (value.Length > 4)
+                    len = 4;
+                else
+                    len = value.Length;
+                for (int i = 0; i < len; i++)
                 {
                     Type[i] = value[i];
                 }
