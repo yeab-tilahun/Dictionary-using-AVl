@@ -56,8 +56,8 @@ namespace Dictionary
         {
            // Admin a1 = new Admin(1);
             Admin.textBox1.Text = word;
-            Admin.textBox2.Text = pron;
-            Admin.textBox3.Text = type;
+            Admin.textBox3.Text = pron;
+            Admin.textBox2.Text = type;
             Admin.textBox4.Text = meaning;
         }
     }
