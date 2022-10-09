@@ -4,17 +4,21 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace Dictionary
 {
     public partial class LoadWord : UserControl
     {
+        SpeechSynthesizer speech;
         public LoadWord(int a)
         {
             InitializeComponent();
+            speech = new SpeechSynthesizer();
             if (a == 0)
                 pictureBox2.Visible = false;
         }
@@ -59,6 +63,11 @@ namespace Dictionary
             Admin.textBox3.Text = pron;
             Admin.textBox2.Text = type;
             Admin.textBox4.Text = meaning;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            //speech.SpeakAsync(Admin.textBox1.Text);
         }
     }
 }

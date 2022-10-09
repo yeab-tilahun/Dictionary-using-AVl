@@ -16,7 +16,7 @@ namespace Dictionary
     {
         AVL tree = new AVL();
 
-        public void init_avl()
+        public void loadTree()
         {
             if (File.Exists(fileName))
             {
@@ -28,20 +28,18 @@ namespace Dictionary
                     while (stream.Position < stream.Length)
                     {
                         DicIndex load = new DicIndex();
-                        // Console.WriteLine("start =" + stream.Position);
                         load.index.Insert(stream.Position);
-
                         Dictionary read = (Dictionary)formatter.Deserialize(stream);
                         load.word = read.word;
-                        tree.Add(load);
+                        tree.insert(load);   
                     }
                     stream.Close();
                 }
             }
         }
         public Form1()
-        {  
-            init_avl();
+        {
+            loadTree();
             InitializeComponent();
         }
         public Form1(int a)
@@ -54,7 +52,6 @@ namespace Dictionary
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //populateItems();
             getIndex();
         }
         public void getIndex()
@@ -158,7 +155,6 @@ namespace Dictionary
             // Case a*bC
             else
             {
-                //Console.WriteLine("Invalid wildcard placement");
                 regex = null;
             }
 
@@ -207,13 +203,13 @@ namespace Dictionary
 
         private void button2_Click(object sender, EventArgs e)
         {
-            init_clean();
+           // DeleteNUll();
             this.Hide();
             LogIn l1 = new LogIn();
                 l1.Show();
 
         }
-        public void init_clean()
+      /*  public void DeleteNUll()
         {      // ReCreate Temporary File
             FileStream fileStream1 = new FileStream(tempfileName, FileMode.Create);
             fileStream1.Close();
@@ -234,18 +230,18 @@ namespace Dictionary
                         Dictionary read = (Dictionary)formatter.Deserialize(stream);
 
                         if (new string(read.word) == new string(ck.word))
-                            Console.WriteLine("Cleaning  ---> ");
+                            MessageBox.Show("Cleaning", "Dictionary", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         else
                             formatter2.Serialize(stream2, read);
                     }
 
                     stream2.Close();
                 }
-                System.IO.File.Delete(fileName);
-                System.IO.File.Move(tempfileName, fileName);
+               File.Delete(fileName);
+               File.Move(tempfileName, fileName);
             }
         }
-
+      */
 
         public bool MouseDown;
         public Point LastLocation;

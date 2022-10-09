@@ -23,7 +23,7 @@ namespace Dictionary
         AVL tree = new AVL();
         const string fileName = "Dictionary1.dat";
         const string tempfileName = "temp.dat";
-        public void init_avl()
+        public void loadTree()
         {
             if (File.Exists(fileName))
             {
@@ -34,12 +34,10 @@ namespace Dictionary
                     while (stream.Position < stream.Length)
                     {
                         DicIndex load = new DicIndex();
-                        // Console.WriteLine("start =" + stream.Position);
                         load.index.Insert(stream.Position);
-
                         Dictionary read = (Dictionary)formatter.Deserialize(stream);
                         load.word = read.word;
-                        tree.Add(load);
+                        tree.insert(load);
                     }
                     stream.Close();
                 }
@@ -47,7 +45,7 @@ namespace Dictionary
         }
         public Admin()
         {
-            init_avl();
+            loadTree();
             InitializeComponent();
         }
         public Admin(int a)
@@ -57,7 +55,6 @@ namespace Dictionary
         private void Admin_Load(object sender, EventArgs e)
         {
           SetupTextBox();
-            //view_all();
             getIndex();
         }
 
@@ -66,7 +63,9 @@ namespace Dictionary
             Stack<Node> s = new Stack<Node>();
             Queue<long> q = new Queue<long>();
             Node curr = tree.root;
-
+            //inorder traverser iteretively
+            //index to the queue
+            //from queue to display 
             while (curr != null || s.Count != 0)
             {
                 while (curr != null)
@@ -179,7 +178,6 @@ namespace Dictionary
             // Case a*bC
             else
             {
-                Console.WriteLine("Invalid wildcard placement");
                 regex = null;
             }
 
@@ -272,7 +270,7 @@ namespace Dictionary
 
             //find the position from the file and assign it to index
             Dindex.index.Insert(word_add(input));
-            tree.Add(Dindex);
+            tree.insert(Dindex);
             flowLayoutPanel1.Controls.Clear();
             getIndex();
         }
@@ -290,7 +288,9 @@ namespace Dictionary
             {
 
                 BinaryFormatter formatter = new BinaryFormatter();
+                //set the last position to index
                 index = stream.Position;
+                //add the word to the file
                 formatter.Serialize(stream, input);
                 stream.Close();
             }
@@ -366,7 +366,7 @@ namespace Dictionary
             }
         }
 
-        public void init_clean()
+        public void DeleteNull()
         {      // ReCreate Temporary File
             FileStream fileStream1 = new FileStream(tempfileName, FileMode.Create);
             fileStream1.Close();
@@ -400,7 +400,7 @@ namespace Dictionary
         }
         private void button7_Click(object sender, EventArgs e)
         {
-            init_clean();
+            DeleteNull();
             this.Hide();
             LogIn l1 = new LogIn();
             l1.Show();

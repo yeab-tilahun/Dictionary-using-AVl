@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dictionary;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,7 +13,6 @@ namespace Dictionary
        public Node root;
         public AVL()
         {
-
 
         }
 
@@ -33,17 +33,17 @@ namespace Dictionary
         }
 
 
-        public void Add(DicIndex data)
+        public void insert(DicIndex data)
         {
-            Node newItem = new Node(data);
+            Node newData = new Node(data);
             if (root == null)
             {
-                root = newItem;
+                root = newData;
             }
             else
             {
 
-                root = RecursiveInsert(root, newItem);
+                root = Insert(root, newData);
             }
         }
 
@@ -55,40 +55,36 @@ namespace Dictionary
                 return -1;
             else
             {
-                char[] FNode = First.data.word;
-
-                char[] SNode = Second.data.word;
-
-
-                string charsStr = new string(FNode);
-                string charsStr2 = new string(SNode);
+                char[] FirstNode = First.data.word;
+                char[] SecondNode = Second.data.word;
+                string charsStr = new string(FirstNode);
+                string charsStr2 = new string(SecondNode);
                 int x = charsStr.CompareTo(charsStr2);
 
+                //returns 1,-1 or 0 according to the string
                 return x;
             }
         }
 
 
-        private Node RecursiveInsert(Node current, Node n)
+        //works recursively to enter the data to the tree
+        private Node Insert(Node current, Node n)
         {
             if (current == null)
             {
                 current = n;
                 return current;
             }
-            else if (CompareNode(n, current) == 0)
-            {
-                current.data.index.Insert(n.data.index.ToDataArray()[0]);
-                current = balance_tree(current);
-            }
+            //when the new node is less than the current
             else if (CompareNode(n, current) == -1)
             {
-                current.left = RecursiveInsert(current.left, n);
+                current.left = Insert(current.left, n);
                 current = balance_tree(current);
             }
+            //when the new node is greater than the current
             else if (CompareNode(n, current) == 1)
             {
-                current.right = RecursiveInsert(current.right, n);
+                current.right = Insert(current.right, n);
                 current = balance_tree(current);
             }
             return current;
@@ -96,27 +92,62 @@ namespace Dictionary
 
         private Node balance_tree(Node current)
         {
-            int b_factor = balance_factor(current);
+            int b_factor = getBalance(current);
             if (b_factor > 1)
             {
-                if (balance_factor(current.left) > 0)
+                //when it is inserted to the left and the left balance is greather than 0
+                /*
+
+                    c
+                     \
+                      b
+                       \
+                        a
+                  */
+                if (getBalance(current.left) > 0)
                 {
-                    current = RotateLL(current);
+                    current = singleLeft(current);
                 }
+                //when it is inserted to the left and then to the right
+                /*
+                   c
+                  /
+                 a
+                  \
+                   b
+                      */
                 else
                 {
-                    current = RotateLR(current);
+                    current = doubleLR(current);
                 }
             }
             else if (b_factor < -1)
             {
-                if (balance_factor(current.right) > 0)
+                //when it is inserted to the right and then to the left balance is greather than 0
+                /*
+                   c
+                    \
+                     b
+                    /
+                   a 
+
+                  */
+                if (getBalance(current.right) > 0)
                 {
-                    current = RotateRL(current);
+                    current = doubleRL(current);
                 }
+
+                //when it is inserted to the left and the left balance is greather than 0
+                /*
+                  c
+                 /
+                b
+               /
+              a
+                  */
                 else
                 {
-                    current = RotateRR(current);
+                    current = singleRight(current);
                 }
             }
             return current;
@@ -129,23 +160,25 @@ namespace Dictionary
         private Node Delete(Node current, Node target)
         {
             Node parent;
-            if (current == null)
-            { return null; }
+            if (current == null) 
+                return null;
             else
             {
                 //left subtree
+                //when target is less than the current
                 if (CompareNode(target, current) == -1)
                 {
                     current.left = Delete(current.left, target);
-                    if (balance_factor(current) == -2)//here
+
+                    if (getBalance(current) == -2)
                     {
-                        if (balance_factor(current.right) <= 0)
+                        if (getBalance(current.right) <= 0)
                         {
-                            current = RotateRR(current);
+                            current = singleRight(current);
                         }
                         else
                         {
-                            current = RotateRL(current);
+                            current = doubleRL(current);
                         }
                     }
                 }
@@ -153,15 +186,15 @@ namespace Dictionary
                 else if (CompareNode(target, current) == 1)
                 {
                     current.right = Delete(current.right, target);
-                    if (balance_factor(current) == 2)
+                    if (getBalance(current) == 2)
                     {
-                        if (balance_factor(current.left) >= 0)
+                        if (getBalance(current.left) >= 0)
                         {
-                            current = RotateLL(current);
+                            current = singleLeft(current);
                         }
                         else
                         {
-                            current = RotateLR(current);
+                            current = doubleLR(current);
                         }
                     }
                 }
@@ -178,13 +211,13 @@ namespace Dictionary
                         }
                         current.data = parent.data;
                         current.right = Delete(current.right, parent);
-                        if (balance_factor(current) == 2)//rebalancing
+                        if (getBalance(current) == 2)//rebalancing
                         {
-                            if (balance_factor(current.left) >= 0)
+                            if (getBalance(current.left) >= 0)
                             {
-                                current = RotateLL(current);
+                                current = singleLeft(current);
                             }
-                            else { current = RotateLR(current); }
+                            else { current = doubleLR(current); }
                         }
                     }
                     else
@@ -217,59 +250,24 @@ namespace Dictionary
         {
             if (current != null)
             {
-                if (CompareNode(target, current) == -1)
+                //target < current
+             if (CompareNode(target, current) == -1)
                 {
-                    if (CompareNode(target, current) == 0)
-                    {
-                        return current;
-                    }
-                    else
-                        return Find(target, current.left);
+                    return Find(target, current.left);
                 }
-                else
+                //target = current
+                else if (CompareNode(target, current) == 0)
                 {
-                    if (CompareNode(target, current) == 0)
-                    {
                         return current;
-                    }
-                    else
+                }
+             else
                         return Find(target, current.right);
                 }
-            }
             else
                 return current;
 
         }
 
-        public int i = 0;
-        public void DisplayTree()
-        {
-            if (root == null)
-            {
-                Console.WriteLine("Tree is empty");
-                return;
-            }
-
-            InOrderDisplayTree(root);
-            Console.WriteLine();
-        }
-        private void InOrderDisplayTree(Node current)
-        {
-            if (current != null)
-            {
-
-                InOrderDisplayTree(current.left);
-                foreach (long n in current.data.index.ToDataArray())
-                {
-                    //Console.Write("Word - ({0}) Index -({1}) ", new string(current.data.word), n);
-                    //Console.Write("Index" + n);
-
-                }
-
-                InOrderDisplayTree(current.right);
-
-            }
-        }
         private int max(int l, int r)
         {
             return l > r ? l : r;
@@ -282,42 +280,42 @@ namespace Dictionary
                 int l = getHeight(current.left);
                 int r = getHeight(current.right);
                 int m = max(l, r);
+                //we add 1 because to include the main node we send to find the height
                 height = m + 1;
             }
             return height;
         }
-        private int balance_factor(Node current)
+        private int getBalance(Node node)
         {
-            int l = getHeight(current.left);
-            int r = getHeight(current.right);
-            int b_factor = l - r;
-            return b_factor;
+            if (node == null)
+                return 0;
+            return getHeight(node.left) - getHeight(node.right);
         }
-        private Node RotateRR(Node parent)
+        private Node singleRight(Node parent)
         {
             Node pivot = parent.right;
             parent.right = pivot.left;
             pivot.left = parent;
             return pivot;
         }
-        private Node RotateLL(Node parent)
+        private Node singleLeft(Node parent)
         {
             Node pivot = parent.left;
             parent.left = pivot.right;
             pivot.right = parent;
             return pivot;
         }
-        private Node RotateLR(Node parent)
+        private Node doubleLR(Node parent)
         {
             Node pivot = parent.left;
-            parent.left = RotateRR(pivot);
-            return RotateLL(parent);
+            parent.left = singleRight(pivot);
+            return singleLeft(parent);
         }
-        private Node RotateRL(Node parent)
+        private Node doubleRL(Node parent)
         {
             Node pivot = parent.right;
-            parent.right = RotateLL(pivot);
-            return RotateRR(parent);
+            parent.right = singleLeft(pivot);
+            return singleRight(parent);
         }
 
         private void find_matches(Node node, string regex, List<Node> matches)
@@ -339,4 +337,3 @@ namespace Dictionary
         }
     }
 }
-
