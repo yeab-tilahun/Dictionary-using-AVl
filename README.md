@@ -1,2 +1,2 @@
 # Dictionary
-DICTIONARY USING SELF BALANCING BINARY SEARCH TREE (AVL)
+Dictionary using self balancing binary search tree (AVL)
